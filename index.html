@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>十大明王 - 永安寺数字文博</title>
+    <style>
+        /* 背景音乐样式 - 隐藏视频只保留音频 */
+        .bgm-container {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            z-index: -1;
+        }
+        .bgm-container video {
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+        }
+        
+        /* 音乐控制按钮样式 */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            animation: musicGlow 2s ease-in-out infinite;
+        }
+        .music-control:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.9);
+            transform: scale(1.1);
+        }
+        .music-control.playing::before {
+            content: '♪';
+            color: white;
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .music-control.paused::before {
+            content: '♫';
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        /* 音乐提示文字 */
+        .music-tip {
+            position: fixed;
+            top: 80px;
+            right: 35px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            font-family: 'SimSun', serif;
+            white-space: nowrap;
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 50px;
+        }
+        .music-tip.hide {
+            opacity: 0;
+        }
+        
+        /* 音乐按钮发光动画 */
+        @keyframes musicGlow {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(255,255,255,0.4), 0 0 40px rgba(255,255,255,0.2);
+            }
+            50% { 
+                box-shadow: 0 0 30px rgba(255,255,255,0.6), 0 0 60px rgba(255,255,255,0.3);
+            }
+        }
+        
+        /* 导航栏样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --image-shift: 220px; /* 大图左移距离 */
+            --panel-gap: 48px;    /* 面板与大图之间的水平间距 */
+            --panel-left-offset: 80px; /* 窗口整体向左偏移 */
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: #f2e6ce;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .nav-bar {
+            background: #673424;
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: calc(100vw - 300px);
+            margin: 0 auto;
+            padding: 0 150px;
+            min-width: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ecf0f1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: #bdc3c7;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #ecf0f1;
+        }
+
+        .container {
+            max-width: calc(100vw - 300px);
+            margin: 0 auto;
+            padding: 0 150px;
+            min-width: 1200px;
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-image: url('背景.jpg');
+            background-size: contain;
+            background-position: bottom center;
+            background-repeat: no-repeat;
+            opacity: 0.2;
+            z-index: -1;
+        }
+
+        .mingwang-section {
+            background: white;
+            margin-bottom: 60px;
+            border-radius: 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            height: 250px;
+            width: 100%;
+            transform: translateY(100px);
+        }
+
+        .mingwang-section:first-child {
+            margin-top: 140px;
+        }
+
+        .mingwang-section:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .mingwang-section:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        
+
+        .mingwang-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .mingwang-image-wrapper {
+            width: 800px;
+            height: 250px;
+            position: relative;
+            display: block;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .mingwang-image-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(110, 90, 70, 0.5);
+            opacity: 1;
+            transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .mingwang-image-wrapper:hover::before {
+            opacity: 0;
+        }
+        .mingwang-image-wrapper:hover {
+            transform: scale(1.05);
+        }
+        .mingwang-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 0;
+            margin: 0;
+            display: block;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        /* 提示文字样式 */
+        .mingwang-section::after {
+            content: '点击图片获得更多^^';
+            position: absolute;
+            bottom: 15px;
+            font-family: 'SimSun', serif;
+            font-size: 14px;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        /* 左侧图片的展示框（偶数）显示在右下角 */
+        .mingwang-section:nth-child(even)::after {
+            right: 20px;
+        }
+
+        /* 右侧图片的展示框（奇数）显示在左下角 */
+        .mingwang-section:nth-child(odd)::after {
+            left: 20px;
+        }
+
+        /* 鼠标悬停时显示提示文字 */
+        .mingwang-section:hover::after {
+            opacity: 1;
+        }
+
+        /* 模态框样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: relative;
+            transform: translateX(0);
+            transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .modal-content.moved {
+            transform: translateX(calc(-1 * var(--image-shift)));
+        }
+
+        .modal-image {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            display: block;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 九宫格覆盖层 */
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            pointer-events: none;
+        }
+
+        .grid-overlay.visible { display: grid; }
+
+        .grid-cell {
+            position: relative;
+            outline: none; /* 去掉九宫格线 */
+        }
+
+        .grid-cell .cell-num { display: none; } /* 去掉编号 */
+
+        .grid-dot {
+            position: absolute;
+            width: 18px; /* 再大一点 */
+            height: 18px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #673424;
+            box-shadow: 0 0 0 0 rgba(103,52,36,0.6);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: auto;
+            cursor: pointer;
+            animation: dotPulse 1.8s ease-in-out infinite; /* 浮动闪光 */
+        }
+
+        @keyframes dotPulse {
+            0% { box-shadow: 0 0 0 0 rgba(103,52,36,0.55); }
+            60% { box-shadow: 0 0 0 14px rgba(103,52,36,0); }
+            100% { box-shadow: 0 0 0 0 rgba(103,52,36,0); }
+        }
+
+        /* 右侧自底端上浮窗口 */
+        .info-panel {
+            position: fixed;
+            left: calc(50% + var(--image-shift) + var(--panel-gap) - var(--panel-left-offset));
+            top: 70%; /* 初始更靠下，打开时上浮至中部 */
+            transform: translateY(-50%);
+            width: 520px;
+            max-width: 48vw;
+            max-height: 80vh;
+            background: #f2e6ce; /* 第一个页面背景色 */
+            color: #2c3e50;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+            transition: top 0.45s ease, opacity 0.3s ease;
+            z-index: 1001;
+            overflow: auto;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .panel-layout {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .panel-media {
+            flex-shrink: 0;
+        }
+
+        .panel-media img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .panel-text {
+            flex: 1;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .panel-object {
+            width: 100%;
+            height: auto;
+            border: none;
+            background: transparent;
+        }
+
+        .info-panel.open { top: 50%; opacity: 1; pointer-events: auto; }
+
+        #panelTitle { font-size: 2rem; }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .panel-body { padding: 16px; line-height: 1.7; font-size: 1.35rem; }
+
+        .panel-object {
+            width: 100%;
+            min-height: 220px;
+            border: none;
+            display: block;
+            background: transparent;
+        }
+
+        /* 面板左右分栏布局 */
+        .panel-layout {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .panel-media { flex: 0 0 50%; }
+        .panel-media img { width: 200px; height: 200px; border-radius: 10px; box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
+        .panel-text { flex: 1; font-size: 2rem; line-height: 1.8; color: #2c3e50; }
+        .panel-text em { font-style: italic; }
+
+        .panel-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #673424;
+        }
+
+        .mingwang-content {
+            padding: 30px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .mingwang-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .mingwang-location {
+            font-size: 0.6rem;
+            color: #2c3e50;
+            margin-bottom: -5px;
+            margin-left: 3px;
+            font-weight: normal;
+            letter-spacing: 0.5em;
+        }
+
+
+
+        .mingwang-description {
+            display: none;
+        }
+        .mingwang-text {
+            font-size: 1.6rem;
+            color: #555;
+            line-height: 1.6;
+            margin-left: -5px;
+        }
+        .mingwang-text object {
+            width: 100%;
+            min-height: 3.2em;
+            border: none;
+            display: block;
+            background: transparent;
+        }
+
+        
+
+
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 100%;
+                padding: 0 20px;
+                min-width: auto;
+            }
+            
+            .nav-container {
+                max-width: 100%;
+                padding: 0 20px;
+                min-width: auto;
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .mingwang-section {
+                flex-direction: column !important;
+                height: auto;
+            }
+            
+            .mingwang-image {
+                width: 100%;
+                height: 250px;
+                object-position: center;
+                transform: translateY(0);
+                transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                cursor: pointer;
+                position: relative;
+            }
+
+            .mingwang-image::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(101, 67, 33, 0.6);
+                opacity: 1;
+                transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                pointer-events: none;
+                z-index: 1;
+            }
+
+            .mingwang-image:hover::before {
+                opacity: 0;
+            }
+
+            .mingwang-image:hover {
+                transform: translateY(0) scale(1.05);
+            }
+            
+            .mingwang-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* 欢迎文字样式 */
+        .welcome-text {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            font-family: 'SimSun', serif;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            z-index: 50;
+            letter-spacing: 8px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景音乐 -->
+    <div class="bgm-container">
+      <video id="bgm" autoplay loop>
+        <source src="bgm.mp4" type="video/mp4">
+        您的浏览器不支持视频播放。
+      </video>
+    </div>
+    
+    <!-- 音乐控制按钮 -->
+    <div class="music-control paused" id="musicControl"></div>
+    
+    <!-- 音乐提示文字 -->
+    <div class="music-tip" id="musicTip">点击播放音乐</div>
+    
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <div class="nav-logo">永安寺数字文博</div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active">首页</a>
+                <a href="#" class="nav-link">壁画</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="mingwang-section">
+            <div class="mingwang-image-wrapper"><img src="德加.jpg" alt="焰鬘德迦明王" class="mingwang-image"></div>
+            <div class="mingwang-content">
+                <h2 class="mingwang-title">焰鬘德迦明王</h2>
+                <div class="mingwang-location">永 安 寺 正 宗 殿 北 壁</div>
+                <div class="mingwang-text"><object data="德加.txt" type="text/plain"></object></div>
+            </div>
+        </section>
+
+        <section class="mingwang-section">
+            <div class="mingwang-image-wrapper"><img src="大笑.jpg" alt="大笑明王" class="mingwang-image"></div>
+            <div class="mingwang-content">
+                <h2 class="mingwang-title">大笑明王</h2>
+                <div class="mingwang-location">永 安 寺 正 宗 殿 北 壁</div>
+                <div class="mingwang-text"><object data="大笑.txt" type="text/plain"></object></div>
+            </div>
+        </section>
+
+        <section class="mingwang-section">
+            <div class="mingwang-image-wrapper"><img src="无能.jpg" alt="无能胜明王" class="mingwang-image"></div>
+            <div class="mingwang-content">
+                <h2 class="mingwang-title">无能胜明王</h2>
+                <div class="mingwang-location">永 安 寺 正 宗 殿 北 壁</div>
+                <div class="mingwang-text"><object data="无能.txt" type="text/plain"></object></div>
+            </div>
+        </section>
+
+        <section class="mingwang-section">
+            <div class="mingwang-image-wrapper"><img src="步掷.jpg" alt="步掷明王" class="mingwang-image"></div>
+            <div class="mingwang-content">
+                <h2 class="mingwang-title">步掷明王</h2>
+                <div class="mingwang-location">永 安 寺 正 宗 殿 北 壁</div>
+                <div class="mingwang-text"><object data="步掷.txt" type="text/plain"></object></div>
+            </div>
+        </section>
+
+        <section class="mingwang-section">
+            <div class="mingwang-image-wrapper"><img src="甘露军.jpg" alt="甘露军吒利明王" class="mingwang-image"></div>
+            <div class="mingwang-content">
+                <h2 class="mingwang-title">甘露军吒利明王</h2>
+                <div class="mingwang-location">永 安 寺 正 宗 殿 北 壁</div>
+                <div class="mingwang-text"><object data="甘露军.txt" type="text/plain"></object></div>
+            </div>
+        </section>
+
+        <section class="mingwang-section">
+            <div class="mingwang-image-wrapper"><img src="大力.jpg" alt="大力明王" class="mingwang-image"></div>
+            <div class="mingwang-content">
+                <h2 class="mingwang-title">大力明王</h2>
+                <div class="mingwang-location">永 安 寺 正 宗 殿 北 壁</div>
+                <div class="mingwang-text"><object data="大力.txt" type="text/plain"></object></div>
+            </div>
+        </section>
+
+        <section class="mingwang-section">
+            <div class="mingwang-image-wrapper"><img src="马首.jpg" alt="马首明王" class="mingwang-image"></div>
+            <div class="mingwang-content">
+                <h2 class="mingwang-title">马首明王</h2>
+                <div class="mingwang-location">永 安 寺 正 宗 殿 北 壁</div>
+                <div class="mingwang-text"><object data="马首.txt" type="text/plain"></object></div>
+            </div>
+        </section>
+
+        <section class="mingwang-section">
+            <div class="mingwang-image-wrapper"><img src="不动尊.jpg" alt="不动尊明王" class="mingwang-image"></div>
+            <div class="mingwang-content">
+                <h2 class="mingwang-title">不动尊明王</h2>
+                <div class="mingwang-location">永 安 寺 正 宗 殿 北 壁</div>
+                <div class="mingwang-text"><object data="不动尊.txt" type="text/plain"></object></div>
+            </div>
+        </section>
+
+        <section class="mingwang-section">
+            <div class="mingwang-image-wrapper"><img src="降三世.jpg" alt="降三世明王" class="mingwang-image"></div>
+            <div class="mingwang-content">
+                <h2 class="mingwang-title">降三世明王</h2>
+                <div class="mingwang-location">永 安 寺 正 宗 殿 北 壁</div>
+                <div class="mingwang-text"><object data="降三世.txt" type="text/plain"></object></div>
+            </div>
+        </section>
+
+        <section class="mingwang-section">
+            <div class="mingwang-image-wrapper"><img src="大轮.jpg" alt="大轮明王" class="mingwang-image"></div>
+            <div class="mingwang-content">
+                <h2 class="mingwang-title">大轮明王</h2>
+                <div class="mingwang-location">永 安 寺 正 宗 殿 北 壁</div>
+                <div class="mingwang-text"><object data="大轮.txt" type="text/plain"></object></div>
+            </div>
+        </section>
+    </main>
+
+    
+
+    <!-- 模态框 -->
+    <div class="modal-overlay" id="imageModal">
+        <button class="modal-close" id="modalClose">&times;</button>
+        <div class="modal-content" id="modalContent">
+            <img class="modal-image" id="modalImage" src="" alt="">
+            <div class="grid-overlay" id="gridOverlay">
+                <div class="grid-cell"><span class="cell-num">1</span></div>
+                <div class="grid-cell"><span class="cell-num">2</span></div>
+                <div class="grid-cell"><span class="cell-num">3</span></div>
+                <div class="grid-cell"><span class="cell-num">4</span></div>
+                <div class="grid-cell"><span class="cell-num">5</span></div>
+                <div class="grid-cell"><span class="cell-num">6</span></div>
+                <div class="grid-cell"><span class="cell-num">7</span></div>
+                <div class="grid-cell"><span class="cell-num">8</span></div>
+                <div class="grid-cell"><span class="cell-num">9</span></div>
+            </div>
+        </div>
+    </div>
+
+    <aside class="info-panel" id="infoPanel">
+        <div class="panel-header">
+            <span id="panelTitle">要点说明</span>
+            <button class="panel-close" id="panelClose">×</button>
+        </div>
+        <div class="panel-body" id="panelBody">点击了标记点。</div>
+    </aside>
+
+
+
+    <script>
+        // 滚动动画效果
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // 为每个明王区块添加初始样式和观察器
+        document.querySelectorAll('.mingwang-section').forEach((section, index) => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(130px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            section.style.transitionDelay = `${index * 0.1}s`;
+            observer.observe(section);
+        });
+
+        // 图片点击事件和模态框功能
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalClose = document.getElementById('modalClose');
+        const modalContent = document.getElementById('modalContent');
+        const gridOverlay = document.getElementById('gridOverlay');
+        const infoPanel = document.getElementById('infoPanel');
+        const panelTitle = document.getElementById('panelTitle');
+        const panelClose = document.getElementById('panelClose');
+        const panelBody = document.getElementById('panelBody');
+
+        // 为所有图片添加点击事件（先实现第一个的九宫格与标记点）
+        document.querySelectorAll('.mingwang-image').forEach((img, idx) => {
+            img.addEventListener('click', function() {
+                modalImage.src = this.src;
+                modalImage.alt = this.alt;
+                modal.classList.add('active');
+
+                setTimeout(() => {
+                    modalContent.classList.add('moved');
+                    if (idx === 0) {
+                        gridOverlay.classList.add('visible');
+                        setupGridMarkers('first'); // 第一个图片的标记点
+                    } else if (idx === 1) {
+                        gridOverlay.classList.add('visible');
+                        setupGridMarkers('second'); // 第二个图片（大笑明王）的标记点
+                    } else if (idx === 2) {
+                        gridOverlay.classList.add('visible');
+                        setupGridMarkers('third'); // 第三个图片（无能胜明王）的标记点
+                    } else if (idx === 3) {
+                        gridOverlay.classList.add('visible');
+                        setupGridMarkers('fourth'); // 第四个图片（步掷明王）的标记点
+                    } else if (idx === 4) {
+                        gridOverlay.classList.add('visible');
+                        setupGridMarkers('fifth'); // 第五个图片（甘露军吒利明王）的标记点
+                    } else if (idx === 5) {
+                        gridOverlay.classList.add('visible');
+                        setupGridMarkers('sixth'); // 第六个图片（大力明王）的标记点
+                    } else if (idx === 6) {
+                        gridOverlay.classList.add('visible');
+                        setupGridMarkers('seventh'); // 第七个图片（马首明王）的标记点
+                    } else if (idx === 7) {
+                        gridOverlay.classList.add('visible');
+                        setupGridMarkers('eighth'); // 第八个图片（不动尊明王）的标记点
+                    } else if (idx === 8) {
+                        gridOverlay.classList.add('visible');
+                        setupGridMarkers('ninth'); // 第九个图片（降三世明王）的标记点
+                    } else if (idx === 9) {
+                        gridOverlay.classList.add('visible');
+                        setupGridMarkers('tenth'); // 第十个图片（大轮明王）的标记点
+                    } else {
+                        gridOverlay.classList.remove('visible');
+                    }
+                }, 100);
+            });
+        });
+
+        // 关闭模态框
+        modalClose.addEventListener('click', function() {
+            modal.classList.remove('active');
+            modalContent.classList.remove('moved');
+            gridOverlay.classList.remove('visible');
+            infoPanel.classList.remove('open');
+        });
+
+        // 点击模态框背景关闭
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                modalContent.classList.remove('moved');
+                gridOverlay.classList.remove('visible');
+                infoPanel.classList.remove('open');
+            }
+        });
+
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                modal.classList.remove('active');
+                modalContent.classList.remove('moved');
+                gridOverlay.classList.remove('visible');
+                infoPanel.classList.remove('open');
+            }
+        });
+
+
+
+        // 音乐控制逻辑
+        const musicControl = document.getElementById('musicControl');
+        const musicTip = document.getElementById('musicTip');
+        const bgm = document.getElementById('bgm');
+        let isMusicPlaying = false;
+        
+        // 初始化音乐状态
+        bgm.volume = 0.5; // 设置音量为50%
+        
+        // 音乐控制按钮点击事件
+        musicControl.addEventListener('click', function() {
+            // 隐藏提示文字
+            musicTip.classList.add('hide');
+            
+            if (isMusicPlaying) {
+                bgm.pause();
+                this.classList.remove('playing');
+                this.classList.add('paused');
+                isMusicPlaying = false;
+            } else {
+                bgm.play().then(() => {
+                    this.classList.remove('paused');
+                    this.classList.add('playing');
+                    isMusicPlaying = true;
+                }).catch(error => {
+                    console.log('音乐播放失败:', error);
+                });
+            }
+        });
+        
+        // 页面加载完成后尝试播放音乐
+        window.addEventListener('load', function() {
+            // 延迟一下再尝试播放，确保页面完全加载
+            setTimeout(() => {
+                bgm.play().then(() => {
+                    musicControl.classList.remove('paused');
+                    musicControl.classList.add('playing');
+                    isMusicPlaying = true;
+                }).catch(error => {
+                    console.log('自动播放失败，需要用户交互:', error);
+                });
+            }, 1000);
+        });
+        
+        // 设置九宫格标记点的函数
+        function setupGridMarkers(type) {
+            // 清除所有现有的标记点
+            document.querySelectorAll('.grid-dot').forEach(dot => dot.remove());
+            
+            if (type === 'first') {
+                // 第一个图片（焰鬘德迦明王）的标记点：3, 4, 9
+                const cells = [3, 4, 9];
+                cells.forEach(cellNum => {
+                    const cell = document.querySelector(`.grid-cell:nth-child(${cellNum})`);
+                    if (cell) {
+                        const dot = document.createElement('button');
+                        dot.className = 'grid-dot';
+                        dot.setAttribute('data-cell', cellNum);
+                        dot.setAttribute('title', cellNum);
+                        dot.addEventListener('click', handleDotClick);
+                        cell.appendChild(dot);
+                    }
+                });
+            } else if (type === 'second') {
+                // 第二个图片（大笑明王）的标记点：2, 6, 8
+                const cells = [2, 6, 8];
+                cells.forEach(cellNum => {
+                    const cell = document.querySelector(`.grid-cell:nth-child(${cellNum})`);
+                    if (cell) {
+                        const dot = document.createElement('button');
+                        dot.className = 'grid-dot';
+                        dot.setAttribute('data-cell', cellNum);
+                        dot.setAttribute('title', cellNum);
+                        dot.addEventListener('click', handleDotClick);
+                        cell.appendChild(dot);
+                    }
+                });
+            } else if (type === 'third') {
+                // 第三个图片（无能胜明王）的标记点：3, 4, 9
+                const cells = [3, 4, 9];
+                cells.forEach(cellNum => {
+                    const cell = document.querySelector(`.grid-cell:nth-child(${cellNum})`);
+                    if (cell) {
+                        const dot = document.createElement('button');
+                        dot.className = 'grid-dot';
+                        dot.setAttribute('data-cell', `third_${cellNum}`); // 使用前缀区分
+                        dot.setAttribute('title', cellNum);
+                        dot.addEventListener('click', handleDotClick);
+                        cell.appendChild(dot);
+                    }
+                });
+            } else if (type === 'fourth') {
+                // 第四个图片（步掷明王）的标记点：5, 7
+                const cells = [5, 7];
+                cells.forEach(cellNum => {
+                    const cell = document.querySelector(`.grid-cell:nth-child(${cellNum})`);
+                    if (cell) {
+                        const dot = document.createElement('button');
+                        dot.className = 'grid-dot';
+                        dot.setAttribute('data-cell', `fourth_${cellNum}`); // 使用前缀区分
+                        dot.setAttribute('title', cellNum);
+                        dot.addEventListener('click', handleDotClick);
+                        cell.appendChild(dot);
+                    }
+                });
+            } else if (type === 'fifth') {
+                // 第五个图片（甘露军吒利明王）的标记点：2, 5, 9
+                const cells = [2, 5, 9];
+                cells.forEach(cellNum => {
+                    const cell = document.querySelector(`.grid-cell:nth-child(${cellNum})`);
+                    if (cell) {
+                        const dot = document.createElement('button');
+                        dot.className = 'grid-dot';
+                        dot.setAttribute('data-cell', `fifth_${cellNum}`); // 使用前缀区分
+                        dot.setAttribute('title', cellNum);
+                        dot.addEventListener('click', handleDotClick);
+                        cell.appendChild(dot);
+                    }
+                });
+            } else if (type === 'sixth') {
+                // 第六个图片（大力明王）的标记点：5, 9
+                const cells = [5, 9];
+                cells.forEach(cellNum => {
+                    const cell = document.querySelector(`.grid-cell:nth-child(${cellNum})`);
+                    if (cell) {
+                        const dot = document.createElement('button');
+                        dot.className = 'grid-dot';
+                        dot.setAttribute('data-cell', `sixth_${cellNum}`); // 使用前缀区分
+                        dot.setAttribute('title', cellNum);
+                        dot.addEventListener('click', handleDotClick);
+                        cell.appendChild(dot);
+                    }
+                });
+            } else if (type === 'seventh') {
+                // 第七个图片（马首明王）的标记点：5, 9
+                const cells = [5, 9];
+                cells.forEach(cellNum => {
+                    const cell = document.querySelector(`.grid-cell:nth-child(${cellNum})`);
+                    if (cell) {
+                        const dot = document.createElement('button');
+                        dot.className = 'grid-dot';
+                        dot.setAttribute('data-cell', `seventh_${cellNum}`); // 使用前缀区分
+                        dot.setAttribute('title', cellNum);
+                        dot.addEventListener('click', handleDotClick);
+                        cell.appendChild(dot);
+                    }
+                });
+            } else if (type === 'eighth') {
+                // 第八个图片（不动尊明王）的标记点：2, 5, 7
+                const cells = [2, 5, 7];
+                cells.forEach(cellNum => {
+                    const cell = document.querySelector(`.grid-cell:nth-child(${cellNum})`);
+                    if (cell) {
+                        const dot = document.createElement('button');
+                        dot.className = 'grid-dot';
+                        dot.setAttribute('data-cell', `eighth_${cellNum}`); // 使用前缀区分
+                        dot.setAttribute('title', cellNum);
+                        dot.addEventListener('click', handleDotClick);
+                        cell.appendChild(dot);
+                    }
+                });
+            } else if (type === 'ninth') {
+                // 第九个图片（降三世明王）的标记点：7, 9
+                const cells = [7, 9];
+                cells.forEach(cellNum => {
+                    const cell = document.querySelector(`.grid-cell:nth-child(${cellNum})`);
+                    if (cell) {
+                        const dot = document.createElement('button');
+                        dot.className = 'grid-dot';
+                        dot.setAttribute('data-cell', `ninth_${cellNum}`); // 使用前缀区分
+                        dot.setAttribute('title', cellNum);
+                        dot.addEventListener('click', handleDotClick);
+                        cell.appendChild(dot);
+                    }
+                });
+            } else if (type === 'tenth') {
+                // 第十个图片（大轮明王）的标记点：2, 5, 9
+                const cells = [2, 5, 9];
+                cells.forEach(cellNum => {
+                    const cell = document.querySelector(`.grid-cell:nth-child(${cellNum})`);
+                    if (cell) {
+                        const dot = document.createElement('button');
+                        dot.className = 'grid-dot';
+                        dot.setAttribute('data-cell', `tenth_${cellNum}`); // 使用前缀区分
+                        dot.setAttribute('title', cellNum);
+                        dot.addEventListener('click', handleDotClick);
+                        cell.appendChild(dot);
+                    }
+                });
+            }
+        }
+
+        // 处理标记点点击事件的函数
+        function handleDotClick(e) {
+            e.stopPropagation();
+            const cell = e.target.getAttribute('data-cell');
+            
+            // 如果当前窗口已打开，先渐隐
+            if (infoPanel.classList.contains('open')) {
+                infoPanel.classList.remove('open');
+                // 等待渐隐动画完成后再显示新内容
+                setTimeout(() => {
+                    showPanelContent(cell);
+                }, 300); // 300ms是渐隐动画的持续时间
+            } else {
+                // 如果窗口未打开，直接显示内容
+                showPanelContent(cell);
+            }
+            
+            // 点击点后图片再往左移
+            modalContent.classList.add('moved');
+        }
+
+        // 显示面板内容的函数
+        function showPanelContent(cell) {
+            if (cell === '3') {
+                panelTitle.textContent = '施依印';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="施依印.jpg" alt="施依印"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="1-1.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('1-1.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            // 将指定句子改为斜体
+                            const raw = t.trim();
+                            const target = '焰鬘德迦明王肤色赭黄，须发黑，圆光中所绘菩萨端坐于莲台上，右手作施依印。';
+                            const html = raw.replace(target, `<em>${target}</em>`);
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="施依印.jpg" alt="施依印"></div>
+                                <div class="panel-text">${html.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === '4') {
+                panelTitle.textContent = '沥粉贴金';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="沥粉贴金.jpg" alt="沥粉贴金"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="1-2.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('1-2.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="沥粉贴金.jpg" alt="沥粉贴金"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === '9') {
+                panelTitle.textContent = '如意骑狮';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="狮子.jpg" alt="如意骑狮"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="1-3.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('1-3.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="狮子.jpg" alt="如意骑狮"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === '2') {
+                panelTitle.textContent = '忿怒相';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="忿怒相.jpg" alt="忿怒相"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="2-1.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('2-1.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="忿怒相.jpg" alt="忿怒相"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === '6') {
+                panelTitle.textContent = '长剑';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="长剑.jpg" alt="长剑"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="2-2.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('2-2.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="长剑.jpg" alt="长剑"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === '8') {
+                panelTitle.textContent = '神龙坐骑';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="神龙坐骑.jpg" alt="神龙坐骑"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="2-3.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('2-3.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="神龙坐骑.jpg" alt="神龙坐骑"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'third_3') {
+                panelTitle.textContent = '火焰纹';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="火焰纹.jpg" alt="火焰纹"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="3-1.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('3-1.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="火焰纹.jpg" alt="火焰纹"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'third_4') {
+                panelTitle.textContent = '金锤等手持物';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="金锤等手持物.jpg" alt="金锤等手持物"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="3-2.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('3-2.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="金锤等手持物.jpg" alt="金锤等手持物"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'third_9') {
+                panelTitle.textContent = '麒麟坐骑';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="麒麟坐骑.jpg" alt="麒麟坐骑"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="3-3.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('3-3.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="麒麟坐骑.jpg" alt="麒麟坐骑"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'fourth_5') {
+                panelTitle.textContent = '手持物';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="手持物.jpg" alt="手持物"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="4-2.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('4-2.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="手持物.jpg" alt="手持物"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'fourth_7') {
+                panelTitle.textContent = '六牙白象';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="六牙白象.jpg" alt="六牙白象"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="4-3.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('4-3.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="六牙白象.jpg" alt="六牙白象"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'fifth_2') {
+                panelTitle.textContent = '慈悲相';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="慈悲相.jpg" alt="慈悲相"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="5-1.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('5-1.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="慈悲相.jpg" alt="慈悲相"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'fifth_5') {
+                panelTitle.textContent = '独钴印';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="独钴印.jpg" alt="独钴印"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="5-2.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('5-2.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="独钴印.jpg" alt="独钴印"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'fifth_9') {
+                panelTitle.textContent = '骑虎';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="骑虎.jpg" alt="骑虎"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="5-3.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('5-3.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="骑虎.jpg" alt="骑虎"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'sixth_5') {
+                panelTitle.textContent = '弓箭等手持物';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="弓箭等手持物.jpg" alt="弓箭等手持物"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="6-2.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('6-2.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="弓箭等手持物.jpg" alt="弓箭等手持物"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'sixth_9') {
+                panelTitle.textContent = '公牛坐骑';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="公牛坐骑.jpg" alt="公牛坐骑"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="6-3.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('6-3.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="公牛坐骑.jpg" alt="公牛坐骑"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'seventh_5') {
+                panelTitle.textContent = '兽面腹甲';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="兽面腹甲.jpg" alt="兽面腹甲"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="7-2.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('7-2.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="兽面腹甲.jpg" alt="兽面腹甲"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'seventh_9') {
+                panelTitle.textContent = '麒麟坐骑（似）';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="麒麟坐骑（似）.jpg" alt="麒麟坐骑（似）"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="7-3.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('7-3.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="麒麟坐骑（似）.jpg" alt="麒麟坐骑（似）"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'eighth_2') {
+                panelTitle.textContent = '主面';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="主面.jpg" alt="主面"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="8-1.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('8-1.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="主面.jpg" alt="主面"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'eighth_5') {
+                panelTitle.textContent = '降三世印';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="降三世印.jpg" alt="降三世印"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="8-3.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('8-3.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="降三世印.jpg" alt="降三世印"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'eighth_7') {
+                panelTitle.textContent = '贪嗔痴';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="贪嗔痴.jpg" alt="贪嗔痴"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="8-2.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('8-2.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="贪嗔痴.jpg" alt="贪嗔痴"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'ninth_7') {
+                panelTitle.textContent = '大自在天';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="大自在天.jpg" alt="大自在天"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="9-2.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('9-2.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="大自在天.jpg" alt="大自在天"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'ninth_9') {
+                panelTitle.textContent = '五爪龙';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="五爪龙.jpg" alt="五爪龙"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="9-3.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('9-3.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="五爪龙.jpg" alt="五爪龙"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'tenth_2') {
+                panelTitle.textContent = '宝剑等手持物';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="宝剑等手持物.jpg" alt="宝剑等手持物"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="10-1.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('10-1.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="宝剑等手持物.jpg" alt="宝剑等手持物"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'tenth_5') {
+                panelTitle.textContent = '外缚拳印';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="外缚拳印.jpg" alt="外缚拳印"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="10-2.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('10-2.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="外缚拳印.jpg" alt="外缚拳印"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else if (cell === 'tenth_9') {
+                panelTitle.textContent = '狮形神兽';
+                if (location.protocol === 'file:') {
+                    panelBody.innerHTML = `
+                      <div class="panel-layout">
+                        <div class="panel-media"><img src="狮形神兽.jpg" alt="狮形神兽"></div>
+                        <div class="panel-text">
+                          <object class="panel-object" data="10-3.txt" type="text/plain"></object>
+                        </div>
+                      </div>`;
+                } else {
+                    fetch('10-3.txt?_=' + Date.now())
+                        .then(r => r.ok ? r.text() : Promise.reject())
+                        .then(t => {
+                            panelBody.innerHTML = `
+                              <div class="panel-layout">
+                                <div class="panel-media"><img src="狮形神兽.jpg" alt="狮形神兽"></div>
+                                <div class="panel-text">${t.replace(/\n/g,'<br>')}</div>
+                              </div>`;
+                        })
+                        .catch(() => { panelBody.textContent = '内容加载失败'; });
+                }
+            } else {
+                panelTitle.textContent = '要点说明';
+                panelBody.textContent = `点击了编号 ${cell} 的标记点`;
+            }
+            
+            // 显示新窗口
+            infoPanel.classList.add('open');
+        }
+
+        // 关闭信息面板
+        panelClose.addEventListener('click', () => infoPanel.classList.remove('open'));
+
+        // 从与图片同名的 .txt 文件加载描述内容（例如 德加.jpg -> 德加.txt）
+        document.querySelectorAll('.mingwang-section').forEach(section => {
+            const img = section.querySelector('.mingwang-image');
+            const descEl = section.querySelector('.mingwang-description');
+            if (!img || !descEl) return;
+            const src = img.getAttribute('src') || '';
+            const base = src.replace(/\.[^.]+$/, '');
+            const txtPath = base + '.txt';
+            const url = `${txtPath}?_=${Date.now()}`; // 防缓存
+            fetch(url)
+                .then(res => res.ok ? res.text() : Promise.reject())
+                .then(text => { descEl.textContent = text.trim(); })
+                .catch(() => {});
+        });
+    </script>
+    
+    <!-- 欢迎文字 -->
+    <div class="welcome-text">欢  迎  参  观  永  安  寺</div>
+</body>
+</html>
+

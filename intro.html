@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>明王引导页</title>
+  <style>
+    /* 背景音乐样式 - 隐藏视频只保留音频 */
+    .bgm-container {
+      position: fixed;
+      top: -9999px;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      z-index: -1;
+    }
+    .bgm-container video {
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+    
+    /* 音乐控制按钮样式 */
+    .music-control {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      animation: musicGlow 2s ease-in-out infinite;
+    }
+    .music-control:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.9);
+      transform: scale(1.1);
+    }
+    .music-control.playing::before {
+      content: '♪';
+      color: white;
+      font-size: 24px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .music-control.paused::before {
+      content: '♫';
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 24px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    /* 音乐提示文字 */
+    .music-tip {
+      position: fixed;
+      top: 80px;
+      right: 35px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 12px;
+      font-family: 'SimSun', serif;
+      white-space: nowrap;
+      z-index: 100;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      text-align: center;
+      width: 50px;
+    }
+    .music-tip.hide {
+      opacity: 0;
+    }
+    
+    /* 音乐按钮发光动画 */
+    @keyframes musicGlow {
+      0%, 100% { 
+        box-shadow: 0 0 20px rgba(255,255,255,0.4), 0 0 40px rgba(255,255,255,0.2);
+      }
+      50% { 
+        box-shadow: 0 0 30px rgba(255,255,255,0.6), 0 0 60px rgba(255,255,255,0.3);
+      }
+    }
+    
+    body {
+      background: #f2e6ce;
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .intro-viewport {
+      width: 100vw;
+      max-width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .intro-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      height: 100vh;
+      width: 200vw;
+      will-change: opacity, transform;
+      transition: opacity 1.2s, transform 2.8s cubic-bezier(.4,0,.2,1);
+      opacity: 1;
+      position: absolute;
+      left: 0; top: 0;
+      z-index: 1;
+      transform: translateX(0) translateY(0);
+    }
+    .intro-row.left {
+      transform: translateX(-100vw) translateY(0);
+    }
+    .intro-row.up {
+      opacity: 0;
+      transform: translateX(-100vw) translateY(-100vh);
+      pointer-events: none;
+    }
+    .intro-img-wrapper {
+      position: relative;
+      height: 100vh;
+      width: 20vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .intro-img {
+      height: 100vh;
+      width: 100%;
+      object-fit: cover;
+      object-position: center center;
+      border-radius: 0;
+      box-shadow: none;
+      margin: 0;
+      background: #fff8e6;
+      transition: filter 0.5s;
+      flex-shrink: 0;
+      display: block;
+    }
+    .intro-mask {
+      position: absolute;
+      left: 0; top: 0; right: 0; bottom: 0;
+      background: rgba(40, 30, 20, 0.75);
+      pointer-events: none;
+      transition: opacity 0.5s;
+      opacity: 1;
+      z-index: 2;
+    }
+    .intro-mask.hide {
+      opacity: 0;
+    }
+    .interactive-dot {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.3) 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.4);
+      z-index: 10;
+      animation: dotGlow 2s ease-in-out infinite;
+      opacity: 0.3;
+      transition: all 0.5s ease-in-out;
+    }
+    .interactive-dot.highlight {
+      opacity: 1;
+      background: radial-gradient(circle, rgba(255,215,0,0.9) 0%, rgba(255,215,0,0.6) 50%, rgba(255,215,0,0.3) 100%);
+      box-shadow: 0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,215,0,0.4);
+      animation: dotGlowHighlight 1s ease-in-out infinite;
+    }
+    .jumping-circle {
+      display: none;
+    }
+    @keyframes dotGlow {
+      0%, 100% { 
+        box-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.4);
+        transform: translateX(-50%) scale(1);
+      }
+      50% { 
+        box-shadow: 0 0 30px rgba(255,255,255,1), 0 0 60px rgba(255,255,255,0.6);
+        transform: translateX(-50%) scale(1.1);
+      }
+    }
+    @keyframes dotGlowHighlight {
+      0%, 100% { 
+        box-shadow: 0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,215,0,0.4);
+        transform: translateX(-50%) scale(1);
+      }
+      50% { 
+        box-shadow: 0 0 30px rgba(255,215,0,1), 0 0 60px rgba(255,215,0,0.6);
+        transform: translateX(-50%) scale(1.1);
+      }
+    }
+    @keyframes jump {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+  </style>
+</head>
+<body>
+  <!-- 背景音乐 -->
+  <div class="bgm-container">
+    <video id="bgm" autoplay loop>
+      <source src="bgm.mp4" type="video/mp4">
+      您的浏览器不支持视频播放。
+    </video>
+  </div>
+  
+  <!-- 音乐控制按钮 -->
+  <div class="music-control paused" id="musicControl"></div>
+  
+  <!-- 音乐提示文字 -->
+  <div class="music-tip" id="musicTip">点击播放音乐</div>
+  
+  <div class="intro-viewport">
+    <div class="intro-row" id="introRow">
+      <div class="intro-img-wrapper"><img src="德加.jpg" class="intro-img" alt="焰鬘德迦明王"><div class="intro-mask"></div></div>
+      <div class="intro-img-wrapper"><img src="大笑.jpg" class="intro-img" alt="大笑明王"><div class="intro-mask"></div></div>
+      <div class="intro-img-wrapper"><img src="无能.jpg" class="intro-img" alt="无能胜明王"><div class="intro-mask"></div></div>
+      <div class="intro-img-wrapper"><img src="步掷.jpg" class="intro-img" alt="步掷明王"><div class="intro-mask"></div></div>
+      <div class="intro-img-wrapper"><img src="甘露军.jpg" class="intro-img" alt="甘露军吒利明王"><div class="intro-mask"></div></div>
+      <div class="intro-img-wrapper"><img src="大力.jpg" class="intro-img" alt="大力明王"><div class="intro-mask"></div></div>
+      <div class="intro-img-wrapper"><img src="马首.jpg" class="intro-img" alt="马首明王"><div class="intro-mask"></div></div>
+      <div class="intro-img-wrapper"><img src="不动尊.jpg" class="intro-img" alt="不动尊明王"><div class="intro-mask"></div></div>
+      <div class="intro-img-wrapper"><img src="降三世.jpg" class="intro-img" alt="降三世明王"><div class="intro-mask"></div></div>
+      <div class="intro-img-wrapper"><img src="大轮.jpg" class="intro-img" alt="大轮明王"><div class="intro-mask"></div></div>
+    </div>
+  </div>
+  <script>
+    // 音乐控制逻辑
+    const musicControl = document.getElementById('musicControl');
+    const musicTip = document.getElementById('musicTip');
+    const bgm = document.getElementById('bgm');
+    let isMusicPlaying = false;
+    
+    // 初始化音乐状态
+    bgm.volume = 0.5; // 设置音量为50%
+    
+    // 音乐控制按钮点击事件
+    musicControl.addEventListener('click', function() {
+      // 隐藏提示文字
+      musicTip.classList.add('hide');
+      
+      if (isMusicPlaying) {
+        bgm.pause();
+        this.classList.remove('playing');
+        this.classList.add('paused');
+        isMusicPlaying = false;
+      } else {
+        bgm.play().then(() => {
+          this.classList.remove('paused');
+          this.classList.add('playing');
+          isMusicPlaying = true;
+        }).catch(error => {
+          console.log('音乐播放失败:', error);
+        });
+      }
+    });
+    
+    // 页面加载完成后尝试播放音乐
+    window.addEventListener('load', function() {
+      // 延迟一下再尝试播放，确保页面完全加载
+      setTimeout(() => {
+        bgm.play().then(() => {
+          musicControl.classList.remove('paused');
+          musicControl.classList.add('playing');
+          isMusicPlaying = true;
+        }).catch(error => {
+          console.log('自动播放失败，需要用户交互:', error);
+        });
+      }, 1000);
+    });
+    
+    // 为每张图片添加发光互动点
+    const imgWrappers = document.querySelectorAll('.intro-img-wrapper');
+    imgWrappers.forEach(wrapper => {
+      const dot = document.createElement('div');
+      dot.className = 'interactive-dot';
+      wrapper.appendChild(dot);
+    });
+
+    // 原有的蒙版轮播逻辑
+    const masks = Array.from(document.querySelectorAll('.intro-mask'));
+    const dots = document.querySelectorAll('.interactive-dot');
+    const row = document.getElementById('introRow');
+    let maskIdx = 0;
+    
+    function updateMasks() {
+      // 更新蒙版
+      masks.forEach((mask, i) => {
+        if (i === maskIdx) mask.classList.add('hide');
+        else mask.classList.remove('hide');
+      });
+      
+      // 更新光点高亮
+      dots.forEach((dot, i) => {
+        if (i === maskIdx) dot.classList.add('highlight');
+        else dot.classList.remove('highlight');
+      });
+      
+      maskIdx++;
+      if (maskIdx === 5) {
+        // 第五张高亮时，整体向左移动
+        row.classList.add('left');
+      }
+      if (maskIdx < masks.length) {
+        setTimeout(updateMasks, 1500);
+      } else {
+        setTimeout(() => {
+          row.classList.add('up');
+          setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+        }, 1500);
+      }
+    }
+    
+    window.onload = function() {
+      updateMasks();
+    };
+  </script>
+</body>
+</html>
